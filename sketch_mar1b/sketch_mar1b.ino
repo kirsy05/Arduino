@@ -11,7 +11,9 @@ This script uses an Arduino together with a 0518
 #include <RTClib.h>
 #include <OneWire.h>
 
-RTC_051307 rtc;
+#define CONVERT_T 0x44
+
+RTC_DS1307 rtc;
 
 OneWire ow(4);
 
@@ -33,6 +35,10 @@ void setup() {
 }
 
 void loop() {
+  //used webpage: https://www.pjrc.com/teensy/td_libs_OneWire.html
+  //Start 1st sequence
+  ow.reset();
+  ow.write(0x44);
   // put your main code here, to run repeatedly:
 
 }
