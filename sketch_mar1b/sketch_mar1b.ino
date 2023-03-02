@@ -84,6 +84,9 @@ void loop() {
 
   float tempCelsius = tempRead / 16.0; //divide by 2^4 = 16 for 4 digits after the comma
 
+  Serial.println(tempCelsius); //print Temperature results on serial monitor
+  delay(1000); //adding a delay of 1000 ms
+
 
 
   
