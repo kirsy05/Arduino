@@ -41,11 +41,48 @@ void setup() {
 }
 
 void loop() {
+  byte rom_code[8]; //create an array containing 8 elements of type byte for the rom code
+  byte sp_data[9]; //new array for Skretchpade date of lenght 9
+
+
   //used webpage: https://www.pjrc.com/teensy/td_libs_OneWire.html
-  //Start 1st sequence
+  //Start 1st sequence to read out the rom code (sensor family on USB, then 48-bit registration number)
   ow.reset();
-  ow
-  ow.write(CONVERT_T);  //this line wad added 
+  ow.write(READ_ROM);
+  for (int i=0; i<8; i++){
+    rom_code[i]= ow.read();
+  }
+
+  //check if right sensor family
+  if(rom_code[0] !=IS_DS18B20_SENSOR) {
+    Serial.println("Sensor is not a DS18B20 sensor!");
+    //return;
+
+    //Serial.println("Family code: ");
+    //Serial.println(rom_code[0]);
+  }
+
+  String registration_number;
+  for (int i=1; i<7; i++) {
+    registration_number += String(rom_code[i], HEX); //formate romcode as a HEX
+  }
+
+  //start sequence for converting temparture
+  ow.reset();
+  ow.write(SKIP_ROM);
+  ow.write(CONVERT_T);
+
+  //start sequence for reading data from screatchpad
+  ow.reset();
+  ow.write(SKIP_ROM);
+  ow.write(READ_SCRATCHPAD);
+  for (int i=0; i<9; i++) {
+    sp_data[i]=ow.read();
+  }  
+
+  
+
+  
   // put your main code here, to run repeatedly:
 
 }
