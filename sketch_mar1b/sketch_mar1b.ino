@@ -11,7 +11,10 @@ This script uses an Arduino together with a 0518
 #include <RTClib.h>
 #include <OneWire.h>
 
-#define CONVERT_T 0x44
+#include "ds18b28_commands.h"
+
+//User-defined constants
+const String logfile = "tsensor.log";
 
 RTC_DS1307 rtc;
 
@@ -25,7 +28,10 @@ void setup() {
     rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
   }
 
-  if(!SD.begin(10)) {
+// when time needs to be set on a new device or after a power loss the following line sets the RTC to the date and time this sketch was complied
+  //rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+
+  if(!SD.begin(10)) {   //used pin 10
     Serial.println("SD module initialization failed or Card is not present");
     return;
   }
@@ -38,7 +44,8 @@ void loop() {
   //used webpage: https://www.pjrc.com/teensy/td_libs_OneWire.html
   //Start 1st sequence
   ow.reset();
-  ow.write(0x44);
+  ow
+  ow.write(CONVERT_T);  //this line wad added 
   // put your main code here, to run repeatedly:
 
 }
