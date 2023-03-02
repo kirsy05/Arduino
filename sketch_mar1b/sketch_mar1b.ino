@@ -84,8 +84,18 @@ void loop() {
 
   float tempCelsius = tempRead / 16.0; //divide by 2^4 = 16 for 4 digits after the comma
 
-  Serial.println(tempCelsius); //print Temperature results on serial monitor
+  //Serial.print(registration_number);
+  //Serial.print(", ");
+  //Serial.println(tempCelsius); //print Temperature results on serial monitor
+
+  printOutput(getISOtime());
+  printOutput(", ");
+  printOutput(registration_number);
+  printOutput(", ");
+  printOutputln((String)tempCelsius);
+
   delay(1000); //adding a delay of 1000 ms
+
 
 
 
