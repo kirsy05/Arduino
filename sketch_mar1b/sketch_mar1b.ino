@@ -80,7 +80,11 @@ void loop() {
     sp_data[i]=ow.read();
   }  
 
-  
+  int16_t tempRead = sp_data[1] << 8 | sp_data[0]; //operating 8-bit shift of LSB T_0 and MSB T_1 and store it in a 16 bit long (array?), calling it tempRead
+
+  float tempCelsius = tempRead / 16.0; //divide by 2^4 = 16 for 4 digits after the comma
+
+
 
   
   // put your main code here, to run repeatedly:
