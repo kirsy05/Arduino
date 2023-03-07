@@ -1,7 +1,7 @@
 /*****
 Author: Kirsten Schulze
 eMail: kirsten.schulze@studium.uni-hamburg.de
-Date: 2023-03-01
+Date: 2023-03-07
 
 This script uses an Arduino together with a DS18B20 Sensor
 *****/
@@ -14,7 +14,7 @@ This script uses an Arduino together with a DS18B20 Sensor
 #include "ds18b28_commands.h"
 
 //User-defined constants
-const String logfile = "tsensor.log";
+const String logfile = "tsensor_spot_average.log";
 
 RTC_DS1307 rtc;
 
@@ -84,6 +84,26 @@ void loop() {
 
   float tempCelsius = tempRead / 16.0; //divide by 2^4 = 16 for 4 digits after the comma
 
+  //average measurement over 28 samples
+
+  //float * v = new float[tempCelsius] //array to store the values of all temperature values
+
+  float arrT[] = {tempCelsius};
+
+  float sum = 0; 
+  float average = 0; 
+  int n = 28; 
+
+  //Calculating sum
+
+  for (int i=0; i<28; i++){
+    sum += arrT[i];
+  }
+
+  //  average
+  average = (float)(sum / n); 
+
+
   //Serial.print(registration_number);
   //Serial.print(", ");
   //Serial.println(tempCelsius); //print Temperature results on serial monitor
@@ -94,7 +114,9 @@ void loop() {
   printOutput(", ");
   printOutput(registration_number);
   printOutput(", ");
-  printOutputln((String)tempCelsius);
+  printOutput((String)tempCelsius);
+  printOutput(", ");
+  printOutputln((String)average);
   
   
 
