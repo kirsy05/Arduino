@@ -3,7 +3,7 @@ Author: Kirsten Schulze
 eMail: kirsten.schulze@studium.uni-hamburg.de
 Date: 2023-03-01
 
-This script uses an Arduino together with a 0518
+This script uses an Arduino together with a DS18B20 Sensor
 *****/
 
 #include <SD.h>
