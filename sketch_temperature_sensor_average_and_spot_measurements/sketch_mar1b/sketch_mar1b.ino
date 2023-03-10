@@ -3,7 +3,7 @@ Author: Kirsten Schulze
 eMail: kirsten.schulze@studium.uni-hamburg.de
 Date: 2023-03-07
 
-This script uses an Arduino together with a DS18B20 Sensor
+This script uses an Arduino together with a DS18B20 Sensor and gives spot and average temperature as output
 *****/
 
 #include <SD.h>
@@ -16,6 +16,10 @@ This script uses an Arduino together with a DS18B20 Sensor
 
 //User-defined constants
 const String logfile = "tsensor_spot_average.log";
+
+const int SIZE = 28;
+float arrT[SIZE];  //define an empty array of length 28
+
 
 RTC_DS1307 rtc;
 
@@ -40,8 +44,6 @@ void setup() {
 }
 
 void loop() {
-
-  float arrT[28] = {0};  //define an empty array of length 28
   
   byte rom_code[8]; //create an array containing 8 elements of type byte for the rom code
   byte sp_data[9]; //new array for Skretchpade date of lenght 9
@@ -66,13 +68,13 @@ void loop() {
     registration_number += String(rom_code[i], HEX); //formate romcode as a HEX
   }
 
-  
-  //start sequence for converting temparture
-  ow.reset();
-  ow.write(SKIP_ROM);
-  ow.write(CONVERT_T);
+  for (int k=0; k<SIZE; k++) {
+     //start sequence for converting temparture
+    ow.reset();
+    ow.write(SKIP_ROM);
+    ow.write(CONVERT_T);
 
-  for (int j=0; j<28; j++) {
+  
     //start sequence for reading data from screatchpad
     ow.reset();
     ow.write(SKIP_ROM);
@@ -85,25 +87,29 @@ void loop() {
     
     float tempCelsius = tempRead / 16.0; //divide by 2^4 = 16 for 4 digits after the comma
 
-    //add tempCelsius to array
-    arrT[j] = tempCelsius;
+    for (int j= SIZE -1; j<0; j--) {
+      arrT[j] = arrT[j-1];
+    }
 
-    delay(1000); //adding a delay of 1000 ms
+    //add tempCelsius to array
+    arrT[k] = tempCelsius;
+
+    delay(500); //adding a delay of 1000 ms
   }
 
   float sum = 0; 
   float average = 0; 
   float spot = 0;
-  int n = 28; // Average measurement over 28 samples
+  int n = SIZE; // Average measurement over 28 samples
 
   //Calculating sum
-  for (int i=0; i<28; i++){
+  for (int i=0; i<SIZE; i++){
     sum += arrT[i];
   }
 
   //Calculating average
   average = (float)(sum / n); 
-  spot = arrT[27];
+  spot = arrT[SIZE-1];
 
   
   printOutputln("# timestamp, millis, sensor_id, temperature in °C with 2 digits (spot, avg)");
