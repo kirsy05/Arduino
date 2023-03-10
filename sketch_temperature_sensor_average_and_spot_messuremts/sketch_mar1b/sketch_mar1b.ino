@@ -11,6 +11,7 @@ This script uses an Arduino together with a DS18B20 Sensor
 #include <RTClib.h>
 #include <OneWire.h>
 
+
 #include "ds18b28_commands.h"
 
 //User-defined constants
@@ -36,106 +37,87 @@ void setup() {
     return;
   }
 
-  // put your setup code here, to run once:
-
 }
 
 void loop() {
 
   float arrT[28] = {0};  //define an empty array of length 28
-
-  for (int i=1; i<28; i++) {
-    byte rom_code[8]; //create an array containing 8 elements of type byte for the rom code
-    byte sp_data[9]; //new array for Skretchpade date of lenght 9
+  
+  byte rom_code[8]; //create an array containing 8 elements of type byte for the rom code
+  byte sp_data[9]; //new array for Skretchpade date of lenght 9
     
-    //used webpage: https://www.pjrc.com/teensy/td_libs_OneWire.html
-    //Start 1st sequence to read out the rom code (sensor family on USB, then 48-bit registration number)
-    ow.reset();
-    ow.write(READ_ROM);
-    for (int i=0; i<8; i++){
-      rom_code[i]= ow.read();
-      }
-    //check if right sensor family
-    if(rom_code[0] !=IS_DS18B20_SENSOR) {
-      Serial.println("Sensor is not a DS18B20 sensor!");
-    //return;
+  //Start 1st sequence to read out the rom code (sensor family on USB, then 48-bit registration number)
+  ow.reset();
+  ow.write(READ_ROM);
+  for (int i=0; i<8; i++){
+    rom_code[i]= ow.read();
+  }
+  //check if right sensor family
+  if(rom_code[0] !=IS_DS18B20_SENSOR) {
+    Serial.println("Sensor is not a DS18B20 sensor!");
+  //return;
 
-    //Serial.println("Family code: ");
-    //Serial.println(rom_code[0]);
+  //Serial.println("Family code: ");
+  //Serial.println(rom_code[0]);
     }
     
-    String registration_number;
-    for (int i=1; i<7; i++) {
-      registration_number += String(rom_code[i], HEX); //formate romcode as a HEX
-      }
-    
-    //start sequence for converting temparture
-    ow.reset();
-    ow.write(SKIP_ROM);
-    ow.write(CONVERT_T);
-    
+  String registration_number;
+  for (int i=1; i<7; i++) {
+    registration_number += String(rom_code[i], HEX); //formate romcode as a HEX
+  }
+
+  
+  //start sequence for converting temparture
+  ow.reset();
+  ow.write(SKIP_ROM);
+  ow.write(CONVERT_T);
+
+  for (int j=0; j<28; j++) {
     //start sequence for reading data from screatchpad
     ow.reset();
     ow.write(SKIP_ROM);
     ow.write(READ_SCRATCHPAD);
     for (int i=0; i<9; i++) {
       sp_data[i]=ow.read();
-      }  
+    }  
       
-    int16_t tempRead = sp_data[1] << 8 | sp_data[0]; //operating 8-bit shift of LSB T_0 and MSB T_1 and store it in a 16 bit long (array?), calling it tempRead
+    int16_t tempRead = sp_data[1] << 8 | sp_data[0]; //operating 8-bit shift of LSB T_0 and MSB T_1 and store it
     
     float tempCelsius = tempRead / 16.0; //divide by 2^4 = 16 for 4 digits after the comma
 
     //add tempCelsius to array
-    arrT[tempCelsius]
+    arrT[j] = tempCelsius;
 
+    delay(1000); //adding a delay of 1000 ms
   }
-
-  
-  //average measurement over 28 samples
-
-  //float * v = new float[tempCelsius] //array to store the values of all temperature values
-
-  //float arrT[] = {tempCelsius};
 
   float sum = 0; 
   float average = 0; 
+  float spot = 0;
   int n = 28; 
 
   //Calculating sum
-
   for (int i=0; i<28; i++){
     sum += arrT[i];
   }
 
-  //  average
+  //Calculating average
   average = (float)(sum / n); 
+  spot = arrT[27];
 
-
-  //Serial.print(registration_number);
-  //Serial.print(", ");
-  //Serial.println(tempCelsius); //print Temperature results on serial monitor
-
+  
   printOutputln("# timestamp, millis, sensor_id, temperature in °C with 2 digits (spot, avg)");
   printOutput(getISOtime());  //coment out if using plotter
   printOutput(", "); //coment out if using plotter
   printOutput((String)millis());
-  //printOutput((String)arrT[]);
   printOutput(", ");
   printOutput(registration_number);
   printOutput(", ");
-  printOutput((String)tempCelsius);
+  printOutput((String)spot);
   printOutput(", ");
   printOutputln((String)average);
   
   
-
   delay(1000); //adding a delay of 1000 ms
-
-
-
-
-  
-  // put your main code here, to run repeatedly:
 
 }
