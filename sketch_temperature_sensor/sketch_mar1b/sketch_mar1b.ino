@@ -3,7 +3,7 @@ Author: Kirsten Schulze
 eMail: kirsten.schulze@studium.uni-hamburg.de
 Date: 2023-03-01
 
-This script uses an Arduino together with a 0518
+This script uses an Arduino together with a DS18B20 Sensor
 *****/
 
 #include <SD.h>
@@ -72,7 +72,7 @@ void loop() {
   ow.write(SKIP_ROM);
   ow.write(CONVERT_T);
 
-  //start sequence for reading data from screatchpad
+  //start sequence for reading data from scratchpad
   ow.reset();
   ow.write(SKIP_ROM);
   ow.write(READ_SCRATCHPAD);
@@ -88,8 +88,8 @@ void loop() {
   //Serial.print(", ");
   //Serial.println(tempCelsius); //print Temperature results on serial monitor
 
-  printOutput(getISOtime());  //coment out if using plotter
-  printOutput(", "); //coment out if using plotter
+  printOutput(getISOtime());  //comment out if using plotter
+  printOutput(", "); //comment out if using plotter
   printOutput((String)millis());
   printOutput(", ");
   printOutput(registration_number);
@@ -100,10 +100,5 @@ void loop() {
 
   delay(1000); //adding a delay of 1000 ms
 
-
-
-
-  
-  // put your main code here, to run repeatedly:
 
 }
