@@ -36,13 +36,11 @@ void setup() {
     return;
   }
 
-  // put your setup code here, to run once:
-
 }
 
 void loop() {
-  byte rom_code[8]; //create an array containing 8 elements of type byte for the rom code
-  byte sp_data[9]; //new array for Skretchpade date of lenght 9
+  byte rom_code[8]; //create an array containing 8 elements of type byte for the ROM code
+  byte sp_data[9]; //new array for Scratchpad date of lenght 9
 
 
   //used webpage: https://www.pjrc.com/teensy/td_libs_OneWire.html
@@ -64,15 +62,15 @@ void loop() {
 
   String registration_number;
   for (int i=1; i<7; i++) {
-    registration_number += String(rom_code[i], HEX); //formate romcode as a HEX
+    registration_number += String(rom_code[i], HEX); //formate ROM code as a HEX
   }
 
-  //start sequence for converting temparture
+  //start sequence for converting temperature
   ow.reset();
   ow.write(SKIP_ROM);
   ow.write(CONVERT_T);
 
-  //start sequence for reading data from scratchpad
+  //start sequence for reading data from Scratchpad
   ow.reset();
   ow.write(SKIP_ROM);
   ow.write(READ_SCRATCHPAD);
@@ -80,13 +78,13 @@ void loop() {
     sp_data[i]=ow.read();
   }  
 
-  int16_t tempRead = sp_data[1] << 8 | sp_data[0]; //operating 8-bit shift of LSB T_0 and MSB T_1 and store it in a 16 bit long (array?), calling it tempRead
+  int16_t tempRead = sp_data[1] << 8 | sp_data[0]; //operating 8-bit shift of LSB T_0 and MSB T_1 and store it in a 16 bit long array, calling it tempRead
 
   float tempCelsius = tempRead / 16.0; //divide by 2^4 = 16 for 4 digits after the comma
 
   //Serial.print(registration_number);
   //Serial.print(", ");
-  //Serial.println(tempCelsius); //print Temperature results on serial monitor
+  //Serial.println(tempCelsius); //print temperature results on serial monitor
 
   printOutput(getISOtime());  //comment out if using plotter
   printOutput(", "); //comment out if using plotter

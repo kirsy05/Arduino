@@ -94,7 +94,7 @@ void loop() {
   float sum = 0; 
   float average = 0; 
   float spot = 0;
-  int n = 28; 
+  int n = 28; // Average measurement over 28 samples
 
   //Calculating sum
   for (int i=0; i<28; i++){
